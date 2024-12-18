@@ -58,3 +58,14 @@ while True:
         change_to = 'LEFT'
     elif change_to == 'RIGHT' and direction != 'LEFT':
         change_to = 'RIGHT'
+
+
+    # Déplacement du serpent
+    if direction == 'UP':
+        snake_position[1] -= segment_size
+    elif direction == 'DOWN':
+        snake_position[2] += segment_size
+    elif direction == 'LEFT':
+        snake_position[0] -= segment_size
+    elif direction == 'RIGHT':
+        snake_position[0] += segment_size
