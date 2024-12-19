@@ -1,3 +1,5 @@
+#https://github.com/gitdevpn01/python_pygame_snake/
+
 import pygame , random , time
 
 # Initialisation de pygame
@@ -34,10 +36,23 @@ score = 0
 
 # Fonction gameover
 def game_over():
+    game_font = pygame.font.SysFont('arial', 50)
+    game_over_surface = game_font.render('Ton score est : ' + str(score) , True, RED)
+    game_over_rect = game_over_surface.get_rect()
+    game_over_rect.midtop = (WIDTH/2, HEIGHT/4)
+    screen.blit(game_over_surface, game_over_rect)
     pygame.display.flip()
     time.sleep(2)
     pygame.quit()
     quit()
+
+# Function Score
+def show_score(color, font, size):
+    score_font = pygame.font.SysFont(font, size)
+    score_surface = score_font.render('Score: ',True, color)
+    score_rect = score_surface.get_rect()
+    screen.blit(score_surface, (10,10))
+
 
 # Boucle du jeu
 while True:
@@ -97,6 +112,9 @@ while True:
     for pos in snake_body:
         pygame.draw.rect(screen, GREEN, pygame.Rect(pos[0], pos[1], segment_size, segment_size))
     pygame.draw.rect(screen, WHITE, pygame.Rect(fruit_position[0], fruit_position[1], segment_size, segment_size))
+
+    # Affichage du score
+    show_score(WHITE, 'arial', 20)
 
     # Verification collision
     if snake_position[0] < 0 or snake_position[0] > WIDTH - segment_size:
