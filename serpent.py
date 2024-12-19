@@ -11,7 +11,7 @@ RED = (255,0,0)
 GREEN = (0,255,0)
 
 # Creation fenetre
-screen = pygame.display.set_mode(WIDTH,HEIGHT)
+screen = pygame.display.set_mode((WIDTH,HEIGHT))
 pygame.display.set_caption("Jeu du serpent")
 
 # Frame Per Second
@@ -29,8 +29,15 @@ change_to = direction
 snake_body = [ [100,50], [90,50], [80,50], [70,50] ]
 fruit_position = [random.randrange(1, (WIDTH // 10)) * 10 ,
                   random.randrange(1, (HEIGHT // 10)) * 10  ]
-fruit_apparition = FALSE
+fruit_apparition = False
 score = 0
+
+# Fonction gameover
+def game_over():
+    pygame.display.flip()
+    time.sleep(2)
+    pygame.quit()
+    quit()
 
 # Boucle du jeu
 while True:
@@ -51,21 +58,61 @@ while True:
 
     # Mise à jour direction
     if change_to == 'UP' and direction != 'DOWN':
-        change_to = 'UP'
+        direction = 'UP'
     elif change_to == 'DOWN' and direction != 'UP':
-        change_to = 'DOWN'
+        direction = 'DOWN'
     elif change_to == 'LEFT' and direction != 'RIGHT':
-        change_to = 'LEFT'
+        direction = 'LEFT'
     elif change_to == 'RIGHT' and direction != 'LEFT':
-        change_to = 'RIGHT'
-
+        direction = 'RIGHT'
 
     # Déplacement du serpent
     if direction == 'UP':
         snake_position[1] -= segment_size
     elif direction == 'DOWN':
-        snake_position[2] += segment_size
+        snake_position[1] += segment_size
     elif direction == 'LEFT':
         snake_position[0] -= segment_size
     elif direction == 'RIGHT':
         snake_position[0] += segment_size
+
+    # Ajouter un segment au serpent
+    snake_body.insert(0, list(snake_position))
+
+    # Test collision serpent
+    if snake_position == fruit_position:
+        score += 10
+        fruit_apparition = False
+    else:
+        snake_body.pop()
+    
+    # Position aleatoire de la pomme
+    if not fruit_apparition:
+        fruit_position = [random.randrange(1, (WIDTH//10) ) * 10,
+                          random.randrange(1, (HEIGHT//10) ) * 10]
+        fruit_apparition = True
+
+    # Ecran,dessin des éléments
+    screen.fill(BLACK)
+    for pos in snake_body:
+        pygame.draw.rect(screen, GREEN, pygame.Rect(pos[0], pos[1], segment_size, segment_size))
+    pygame.draw.rect(screen, WHITE, pygame.Rect(fruit_position[0], fruit_position[1], segment_size, segment_size))
+
+    # Verification collision
+    if snake_position[0] < 0 or snake_position[0] > WIDTH - segment_size:
+        game_over()
+    elif snake_position[1] < 0 or snake_position[1] > HEIGHT - segment_size:
+        game_over()
+
+    for block in snake_body[1:]:
+        if snake_position == block:
+            game_over()
+
+    # Mise à jour affichage
+    pygame.display.flip()
+
+    # Vitesse affichage
+    fps.tick(15)
+
+# Fermer pygame
+pygame.quit()
